@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '{print $5}')",
+      "Bash(powershell -Command \"Stop-Process -Id 4216 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(node debug4.js)",
+      "Bash(powershell -Command \"Stop-Process -Id 19604 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -Command \"Stop-Process -Id 19332,9872 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(powershell -Command \"Stop-Process -Id 11596,9128 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(read pid *)",
+      "Bash(powershell -Command 'Stop-Process -Id __TRACKED_VAR__ -Force -ErrorAction SilentlyContinue')",
+      "Bash(node -e \"console.log\\('lenis', require\\('./node_modules/lenis/package.json'\\).version\\)\")",
+      "Bash(node verify4.js)"
+    ]
+  }
+}

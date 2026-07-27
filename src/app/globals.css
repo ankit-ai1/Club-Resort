@@ -1,0 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Manrope:wght@300..800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #06141b;
+  --font-fraunces: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-manrope: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------- Lenis smooth scroll ---------- */
+/* Lenis drives scrolling via JS; native smooth-behavior must yield to it,
+   and it manages its own scroll region. Reduced-motion users never get the
+   .lenis classes (the component bails out), so they keep native scrolling. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--bg);
+  color: #eaf6f7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Custom scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #06141b;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#1793a5, #0e5a63);
+  border-radius: 999px;
+}
+
+/* ---------- Selection ---------- */
+::selection {
+  background: #c9a24b;
+  color: #06141b;
+}
+
+@layer components {
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-eyebrow text-aqua-light;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold transition-all duration-300 will-change-transform;
+  }
+
+  .btn-gold {
+    @apply btn bg-gold-grad text-ink shadow-gold hover:-translate-y-0.5 hover:shadow-[0_0_50px_-8px_rgba(201,162,75,0.7)];
+  }
+
+  .btn-aqua {
+    @apply btn bg-aqua-grad text-ink shadow-glow hover:-translate-y-0.5;
+  }
+
+  .btn-ghost {
+    @apply btn border border-white/25 text-white/90 backdrop-blur-sm hover:border-aqua hover:text-aqua-light hover:bg-white/5;
+  }
+
+  .glass {
+    @apply border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+  }
+
+  .card-hover {
+    @apply transition-all duration-500 hover:-translate-y-2 hover:shadow-lift;
+  }
+
+  .section {
+    @apply px-5 sm:px-8 lg:px-16 xl:px-24;
+  }
+
+  .container-x {
+    @apply mx-auto max-w-7xl;
+  }
+}
+
+@layer utilities {
+  .text-gradient-aqua {
+    background: linear-gradient(120deg, #5fdce8, #2cc4d6 40%, #1793a5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .text-gradient-gold {
+    background: linear-gradient(120deg, #e4c77e, #c9a24b 55%, #a57f2e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .shimmer-text {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      #ffffff 50%,
+      rgba(255, 255, 255, 0.4) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3.5s linear infinite;
+  }
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent);
+    mask-image: linear-gradient(180deg, #000 70%, transparent);
+  }
+  .grid-lines {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+}
