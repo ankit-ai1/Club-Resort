@@ -38,13 +38,23 @@ export default function PinnedExperiences({ experiences }: { experiences: Experi
         const cardTimelines: gsap.core.Timeline[] = [];
         cards.forEach((card, i) => {
           const dir = i % 2 === 0 ? 1 : -1;
-          gsap.set(card, { rotateZ: dir * 6, scale: 0.9, transformOrigin: "50% 100%" });
-          const ctl = gsap.timeline({
-            scrollTrigger: { trigger: card, start: "top 82%", end: "top 40%", scrub: 0.5 },
+          // Incoming card tips up out of depth (rotationX + perspective) and fades in
+          // from a rotated/scaled-down stack; outgoing card recedes and dims as the
+          // next arrives on top — a guided 3D scroll-story, not a flat overlap.
+          gsap.set(card, {
+            rotateZ: dir * 6,
+            rotationX: -32,
+            scale: 0.86,
+            opacity: 0.35,
+            transformPerspective: 1000,
+            transformOrigin: "50% 100%",
           });
-          ctl.to(card, { rotateZ: 0, scale: 1, ease: "none" });
+          const ctl = gsap.timeline({
+            scrollTrigger: { trigger: card, start: "top 84%", end: "top 42%", scrub: 0.5 },
+          });
+          ctl.to(card, { rotateZ: 0, rotationX: 0, scale: 1, opacity: 1, ease: "none" });
           if (cards[i + 1]) {
-            ctl.to(card, { scale: 0.94, y: -14, ease: "none" }, 0.6);
+            ctl.to(card, { scale: 0.94, y: -14, opacity: 0.72, rotationX: 6, ease: "none" }, 0.6);
           }
           cardTimelines.push(ctl);
         });
@@ -89,6 +99,7 @@ export default function PinnedExperiences({ experiences }: { experiences: Experi
           className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end lg:block lg:w-[360px] lg:flex-none lg:pb-10"
         >
           <SectionHeading
+            masked
             eyebrow="The experiences"
             title={
               <>

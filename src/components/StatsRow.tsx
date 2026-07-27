@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { gsap, prefersReducedMotion, isFinePointer, clamp } from "@/lib/gsap";
+import { gsap, ScrollTrigger, prefersReducedMotion, isFinePointer, clamp } from "@/lib/gsap";
 
 function StatCell({ value, label }: { value: string; label: string }) {
   const cellRef = useRef<HTMLDivElement>(null);
@@ -17,37 +17,58 @@ function StatCell({ value, label }: { value: string; label: string }) {
   const target = parseFloat(numStr.replace(/,/g, ""));
   const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
 
-  // Reveal wipe + synced count-up + idle glow breathing.
+  const render = (v: number) => {
+    if (!numRef.current) return;
+    const n = decimals > 0 ? v.toFixed(decimals) : Math.round(v).toLocaleString("en-IN");
+    numRef.current.textContent = `${prefix}${n}${suffix}`;
+  };
+
+  // Mask wipe on enter + count-up tied directly to scroll progress (numbers roll
+  // as the block scrolls through, and roll back on the way up) + idle glow breathing.
   useGSAP(
     () => {
       if (!cellRef.current || !numRef.current || !wipeRef.current) return;
 
       if (prefersReducedMotion()) {
-        numRef.current.textContent = `${prefix}${numStr}${suffix}`;
+        render(target);
         gsap.set(wipeRef.current, { scaleX: 0 });
         return;
       }
 
-      const obj = { val: 0 };
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: cellRef.current, start: "top 88%", once: true },
-      });
-      tl.to(wipeRef.current, { scaleX: 0, duration: 0.9, ease: "premiumInOut", transformOrigin: "right" }, 0).to(
-        obj,
+      render(0);
+      gsap.fromTo(
+        wipeRef.current,
+        { scaleX: 1 },
         {
-          val: target,
-          duration: 1.3,
-          ease: "power2.out",
-          onUpdate: () => {
-            if (!numRef.current) return;
-            const n = decimals > 0 ? obj.val.toFixed(decimals) : Math.round(obj.val).toLocaleString("en-IN");
-            numRef.current.textContent = `${prefix}${n}${suffix}`;
-          },
-        },
-        0.15
+          scaleX: 0,
+          duration: 0.9,
+          ease: "premiumInOut",
+          transformOrigin: "right",
+          scrollTrigger: { trigger: cellRef.current, start: "top 88%", once: true },
+        }
       );
 
-      gsap.to(glowRef.current, { opacity: 0.5, scale: 1.4, duration: 2.2, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      const st = ScrollTrigger.create({
+        trigger: cellRef.current,
+        start: "top 92%",
+        end: "top 42%",
+        scrub: true,
+        onUpdate: (self) => render(target * self.progress),
+      });
+
+      const glow = gsap.to(glowRef.current, {
+        opacity: 0.5,
+        scale: 1.4,
+        duration: 2.2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      return () => {
+        st.kill();
+        glow.kill();
+      };
     },
     { scope: cellRef, dependencies: [value] }
   );

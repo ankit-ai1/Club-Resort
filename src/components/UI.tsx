@@ -14,13 +14,78 @@ export function SectionHeading({
   intro,
   align = "left",
   light = false,
+  masked = false,
 }: {
   eyebrow?: string;
   title: ReactNode;
   intro?: string;
   align?: "left" | "center";
   light?: boolean;
+  /** Opt-in cinematic reveal: eyebrow fades in, then the title rises from behind a
+   *  clip-path mask, then the intro. Used on the homepage only. */
+  masked?: boolean;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (!masked || !ref.current) return;
+      const eyebrowEl = ref.current.querySelector<HTMLElement>("[data-h-eyebrow]");
+      const titleEl = ref.current.querySelector<HTMLElement>("[data-h-title]");
+      const introEl = ref.current.querySelector<HTMLElement>("[data-h-intro]");
+      const targets = [eyebrowEl, titleEl, introEl].filter(Boolean) as HTMLElement[];
+
+      if (prefersReducedMotion()) {
+        gsap.set(targets, { opacity: 1, yPercent: 0, y: 0, clipPath: "none" });
+        return;
+      }
+
+      const tl = gsap.timeline({ scrollTrigger: { trigger: ref.current, start: "top 85%", once: true } });
+      if (eyebrowEl) tl.fromTo(eyebrowEl, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: "premiumOut" });
+      if (titleEl)
+        tl.fromTo(
+          titleEl,
+          { clipPath: "inset(0 0 100% 0)", yPercent: 45, opacity: 0 },
+          { clipPath: "inset(0 0 0% 0)", yPercent: 0, opacity: 1, duration: 1.15, ease: "power4.out" },
+          "-=0.3"
+        );
+      if (introEl)
+        tl.fromTo(introEl, { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, "-=0.75");
+    },
+    { scope: ref, dependencies: [masked] }
+  );
+
+  if (masked) {
+    return (
+      <div ref={ref} className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}>
+        {eyebrow && (
+          <span data-h-eyebrow className="eyebrow">
+            <span className="h-px w-6 bg-gold" />
+            {eyebrow}
+          </span>
+        )}
+        <h2
+          data-h-title
+          className={`mt-4 font-display text-3xl font-semibold leading-[1.1] tracking-tight will-change-transform sm:text-4xl lg:text-5xl ${
+            light ? "text-ink" : "text-white"
+          }`}
+        >
+          {title}
+        </h2>
+        {intro && (
+          <p
+            data-h-intro
+            className={`mt-5 text-base leading-relaxed will-change-transform sm:text-lg ${
+              light ? "text-ink/70" : "text-white/65"
+            }`}
+          >
+            {intro}
+          </p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className={`max-w-2xl ${align === "center" ? "mx-auto text-center" : ""}`}

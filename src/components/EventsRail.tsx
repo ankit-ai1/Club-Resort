@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Sparkles } from "lucide-react";
 import { useGSAP } from "@gsap/react";
-import SmartImage from "./SmartImage";
+import ParallaxImage from "./anim/ParallaxImage";
 import { LinkCTA } from "./UI";
 import { gsap, prefersReducedMotion, isFinePointer, clamp } from "@/lib/gsap";
 
@@ -56,11 +56,12 @@ function EventCard({ o }: { o: Occasion }) {
         className="relative h-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-ink/40 [transform-style:preserve-3d]"
       >
         <div className="relative h-56 overflow-hidden">
-          <SmartImage
+          <ParallaxImage
             src={o.image}
             seed={o.slug}
             alt={o.title}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            amount={6}
+            imgClassName="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" />
         </div>

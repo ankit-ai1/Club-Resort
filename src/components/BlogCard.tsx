@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useGSAP } from "@gsap/react";
-import SmartImage from "./SmartImage";
+import ParallaxImage from "./anim/ParallaxImage";
 import Magnetic from "./anim/Magnetic";
 import { splitText } from "@/lib/splitText";
 import { gsap, animateIn, prefersReducedMotion, isFinePointer, clamp } from "@/lib/gsap";
@@ -101,11 +101,12 @@ export default function BlogCard({
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-abyss/40 transition-shadow duration-500 hover:shadow-lift"
     >
       <div ref={imgRef} className={`relative overflow-hidden will-change-transform ${imageClassName}`}>
-        <SmartImage
+        <ParallaxImage
           src={image}
           seed={seed}
           alt={title}
-          className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+          amount={7}
+          imgClassName="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       </div>

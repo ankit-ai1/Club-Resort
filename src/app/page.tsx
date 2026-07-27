@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Compass, Utensils, Sparkles } from "lucide-react";
 import Hero from "@/components/Hero";
-import SmartImage from "@/components/SmartImage";
+import ParallaxImage from "@/components/anim/ParallaxImage";
 import Testimonials from "@/components/Testimonials";
 import PinnedExperiences from "@/components/PinnedExperiences";
 import EventsRail from "@/components/EventsRail";
@@ -42,6 +42,7 @@ export default function HomePage() {
       <section className="section relative bg-abyss py-24 sm:py-32">
         <div className="container-x">
           <SectionHeading
+            masked
             align="center"
             eyebrow="Made for the moment"
             title={
@@ -61,19 +62,20 @@ export default function HomePage() {
           <DiagonalImageDuo
             className="order-2 grid grid-cols-2 gap-4 lg:order-1"
             first={
-              <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
-                <SmartImage src={img.dining} seed="dining" alt="Multi-cuisine dining" className="h-full w-full object-cover" />
+              <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
+                <ParallaxImage src={img.dining} seed="dining" alt="Multi-cuisine dining" amount={7} />
               </div>
             }
             second={
-              <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
-                <SmartImage src={img.banquet} seed="banquet" alt="Banquet hall" className="h-full w-full object-cover" />
+              <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
+                <ParallaxImage src={img.banquet} seed="banquet" alt="Banquet hall" amount={7} />
               </div>
             }
           />
 
           <div className="order-1 lg:order-2">
             <SectionHeading
+              masked
               eyebrow="Beyond the parks"
               title={
                 <>
@@ -116,6 +118,7 @@ export default function HomePage() {
         <div className="container-x">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
             <SectionHeading
+              masked
               eyebrow="From the journal"
               title={
                 <>

@@ -15,6 +15,7 @@ export default function Hero() {
   const rootRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const contentInnerRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const shapeARef = useRef<HTMLDivElement>(null);
   const shapeBRef = useRef<HTMLDivElement>(null);
@@ -42,19 +43,18 @@ export default function Hero() {
         return () => split?.revert();
       }
 
-      // Background: curtain reveal settling into a slow perpetual breathing zoom.
-      gsap.set(bgRef.current, { clipPath: "inset(100% 0% 0% 0%)", scale: 1.16 });
-      const bgTl = gsap.timeline();
-      bgTl
-        .to(bgRef.current, { clipPath: "inset(0% 0% 0% 0%)", scale: 1.03, duration: 1.5, ease: "premiumInOut" })
-        .to(bgRef.current, { scale: 1.1, duration: 16, ease: "sine.inOut", repeat: -1, yoyo: true }, "-=0.3");
+      // Background: clip-path curtain reveal on load; a static slight zoom baseline
+      // that the scroll timeline (below) then drives up for depth.
+      gsap.set(bgRef.current, { clipPath: "inset(100% 0% 0% 0%)", scale: 1.05 });
+      gsap.to(bgRef.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.5, ease: "premiumInOut" });
 
-      // Headline: character-by-character rise with a slight rotational settle;
-      // the two gradient-clipped words get their own focus-pull (blur+scale) reveal
-      // since splitting their text would break the background-clip:text gradient.
+      // Headline: character-by-character rise from behind a mask with a skew + blur
+      // that resolves as each glyph settles — a bold cinematic entrance. The two
+      // gradient-clipped words get their own focus-pull (blur+scale) reveal since
+      // splitting their text would break the background-clip:text gradient.
       const gradientWords = headlineRef.current?.querySelectorAll<HTMLElement>("[data-no-split]") ?? [];
       if (split) {
-        gsap.set(split.chars, { yPercent: 130, opacity: 0, rotateZ: 6, transformOrigin: "0% 100%" });
+        gsap.set(split.chars, { yPercent: 130, opacity: 0, rotateZ: 4, skewY: 7, filter: "blur(12px)", transformOrigin: "0% 100%" });
       }
       gsap.set(gradientWords, { opacity: 0, scale: 0.82, filter: "blur(10px)" });
 
@@ -63,7 +63,16 @@ export default function Hero() {
       if (split) {
         tl.to(
           split.chars,
-          { yPercent: 0, opacity: 1, rotateZ: 0, duration: 0.9, ease: "premiumOut", stagger: { amount: 0.7, from: "start" } },
+          {
+            yPercent: 0,
+            opacity: 1,
+            rotateZ: 0,
+            skewY: 0,
+            filter: "blur(0px)",
+            duration: 1,
+            ease: "power4.out",
+            stagger: { amount: 0.5, from: "start" },
+          },
           "-=0.35"
         );
       }
@@ -83,6 +92,21 @@ export default function Hero() {
       gsap.to(scrollDotRef.current, { y: 10, repeat: -1, yoyo: true, duration: 0.9, ease: "sine.inOut", delay: 1.9 });
       gsap.to(arrowRef.current, { x: 5, repeat: -1, yoyo: true, duration: 0.85, ease: "sine.inOut", delay: 2 });
       gsap.to(glowRef.current, { scale: 1.25, opacity: 0.55, duration: 1.9, repeat: -1, yoyo: true, ease: "sine.inOut" });
+
+      // Scroll depth separation: as you leave the hero, the background scales up
+      // (the ParallaxLayer wrapper simultaneously drifts it down) while the headline
+      // block rises faster and fades — a strong multi-layer parallax on the way out.
+      gsap.to(bgRef.current, {
+        scale: 1.18,
+        ease: "none",
+        scrollTrigger: { trigger: rootRef.current, start: "top top", end: "bottom top", scrub: true },
+      });
+      gsap.to(contentInnerRef.current, {
+        yPercent: -24,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: { trigger: rootRef.current, start: "top top", end: "bottom top", scrub: true },
+      });
 
       // Mouse-reactive depth: content, decorative shapes and background drift at different rates.
       if (isFinePointer() && rootRef.current) {
@@ -148,8 +172,10 @@ export default function Hero() {
         <div className="h-56 w-56 animate-floaty rounded-full bg-gold/15 blur-3xl" style={{ animationDelay: "-3s" }} />
       </div>
 
-      {/* Content */}
+      {/* Content — contentRef carries mouse-depth (x/y); the inner wrapper carries
+          the scroll rise+fade, so the two transforms never collide. */}
       <div ref={contentRef} className="container-x section relative z-10 w-full py-20 will-change-transform">
+        <div ref={contentInnerRef} className="will-change-transform">
         <div data-hero-anim className="flex items-center gap-3">
           <span className="eyebrow">
             <span className="h-px w-8 bg-gold" /> {site.tagline}
@@ -202,6 +228,7 @@ export default function Hero() {
           <span className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-aqua" /> Bahadurgarh, Haryana · ~1 hr from Delhi
           </span>
+        </div>
         </div>
       </div>
 

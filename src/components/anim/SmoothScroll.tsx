@@ -14,9 +14,11 @@ export default function SmoothScroll() {
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
+    // lerp (not duration) gives the weighty, "heavy premium" catch-up feel —
+    // each frame eases ~9% of the remaining distance toward the target.
     const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo-out
+      lerp: 0.09,
+      wheelMultiplier: 1,
       smoothWheel: true,
       touchMultiplier: 1.6,
     });
