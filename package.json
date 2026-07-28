@@ -2,11 +2,11 @@
   "name": "club-platinum-resort",
   "version": "1.0.0",
   "private": true,
-  "description": "Club Platinum Resort — premium animated resort website built with Next.js, TypeScript, Tailwind & GSAP.",
+  "description": "Club Platinum Resort \u2014 premium animated resort website built with Next.js, TypeScript, Tailwind & GSAP.",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node api.js && next dev",
+    "build": "node api.js && next build",
+    "start": "node api.js && next start",
     "lint": "next lint"
   },
   "dependencies": {
