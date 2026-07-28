@@ -16,6 +16,12 @@
 
 html {
   scroll-behavior: smooth;
+  /* Clip stray horizontal overflow from fixed/animated decorative layers
+     (noise overlay, the WhatsApp ping pulse near the screen edge) so mobile
+     never gets a sideways scroll. `clip` (not `hidden`) avoids creating a
+     scroll container, so it doesn't interfere with ScrollTrigger pinning or
+     Lenis; overflow-y stays visible. */
+  overflow-x: clip;
 }
 
 /* ---------- Lenis smooth scroll ---------- */

@@ -182,6 +182,7 @@ export default function Navbar() {
   );
 
   return (
+    <>
     <header
       ref={headerRef}
       className={`fixed inset-x-0 top-0 z-50 will-change-transform transition-[background-color,border-color,backdrop-filter] duration-500 ${
@@ -275,11 +276,15 @@ export default function Navbar() {
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
+    </header>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — rendered OUTSIDE <header>: the header carries a GSAP
+          transform (hide/show), which would make it the containing block for
+          any fixed descendant and collapse this full-height panel. As a sibling
+          it stays viewport-relative. */}
       <div
         ref={mobileMenuRef}
-        className="fixed inset-0 top-[72px] z-40 hidden overflow-y-auto bg-ink/95 opacity-0 backdrop-blur-xl lg:hidden"
+        className="fixed inset-x-0 bottom-0 top-[72px] z-40 hidden overflow-y-auto bg-ink/95 opacity-0 backdrop-blur-xl lg:hidden"
       >
         <nav className="section flex flex-col gap-1 py-6">
           {nav.map((item) => (
@@ -333,6 +338,6 @@ export default function Navbar() {
           </div>
         </nav>
       </div>
-    </header>
+    </>
   );
 }
