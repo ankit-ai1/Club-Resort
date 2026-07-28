@@ -11,6 +11,9 @@ export default function MouseSpotlight() {
     const el = ref.current;
     if (!el || !isFinePointer() || prefersReducedMotion()) return;
 
+    // Desktop-only ambient effect: reveal it only once a fine pointer is confirmed,
+    // so on touch devices this 560px fixed layer never widens the document.
+    el.classList.remove("hidden");
     gsap.set(el, { xPercent: -50, yPercent: -50, opacity: 0 });
     const setX = gsap.quickTo(el, "x", { duration: 1.1, ease: "power3.out" });
     const setY = gsap.quickTo(el, "y", { duration: 1.1, ease: "power3.out" });
@@ -35,7 +38,7 @@ export default function MouseSpotlight() {
     <div
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-40 h-[560px] w-[560px] rounded-full opacity-0 mix-blend-soft-light"
+      className="pointer-events-none fixed left-0 top-0 z-40 hidden h-[560px] w-[560px] rounded-full opacity-0 mix-blend-soft-light"
       style={{ background: "radial-gradient(circle, rgba(95,220,232,0.4), transparent 68%)" }}
     />
   );
